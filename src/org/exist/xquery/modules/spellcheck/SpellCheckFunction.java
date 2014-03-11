@@ -82,9 +82,6 @@ public class SpellCheckFunction extends BasicFunction {
 				result.add(new StringValue("No suggestions found for word: "
 						+ query));
 			}
-
-			result.add(new StringValue("No suggestions found for word: "
-					+ query));
 		} catch (Exception e) {
 			result.add(new StringValue("There was an exception: "
 					+ e.getMessage()));
