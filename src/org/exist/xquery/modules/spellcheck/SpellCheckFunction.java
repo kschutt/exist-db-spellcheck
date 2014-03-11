@@ -37,9 +37,9 @@ public class SpellCheckFunction extends BasicFunction {
 					new FunctionParameterSequenceType("query", Type.STRING,
 							Cardinality.EXACTLY_ONE, "The query text"),
 					new FunctionParameterSequenceType("db", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The query text"),
+							Cardinality.EXACTLY_ONE, "The db we want to index"),
 					new FunctionParameterSequenceType("field", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The query text") },
+							Cardinality.EXACTLY_ONE, "The field we want to build the dictionary from") },
 			new FunctionReturnSequenceType(Type.STRING,
 					Cardinality.ZERO_OR_MORE, "the text to return"));
 
