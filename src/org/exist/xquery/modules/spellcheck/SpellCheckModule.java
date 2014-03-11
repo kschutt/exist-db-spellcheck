@@ -8,9 +8,9 @@ import org.exist.xquery.FunctionDef;
 
 public class SpellCheckModule extends AbstractInternalModule {
 
-	public final static String NAMESPACE_URI = "http://exist-db.org/xquery/dcnmodules";
+	public final static String NAMESPACE_URI = "http://exist-db.org/xquery/spellcheck";
 
-	public final static String PREFIX = "dcn";
+	public final static String PREFIX = "spellcheck";
 	public final static String INCLUSION_DATE = "2014-03-10";
 	public final static String RELEASED_IN_VERSION = "eXist-2.1";
 
