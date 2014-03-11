@@ -1,0 +1,60 @@
+package org.exist.xquery.modules.spellcheck;
+
+import java.io.File;
+
+import org.exist.dom.QName;
+import org.exist.xquery.BasicFunction;
+import org.exist.xquery.Cardinality;
+import org.exist.xquery.FunctionSignature;
+import org.exist.xquery.XPathException;
+import org.exist.xquery.XQueryContext;
+import org.exist.xquery.value.FunctionParameterSequenceType;
+import org.exist.xquery.value.FunctionReturnSequenceType;
+import org.exist.xquery.value.Sequence;
+import org.exist.xquery.value.SequenceIterator;
+import org.exist.xquery.value.SequenceType;
+import org.exist.xquery.value.StringValue;
+import org.exist.xquery.value.Type;
+import org.exist.xquery.value.ValueSequence;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.spell.PlainTextDictionary;
+import org.apache.lucene.search.spell.SpellChecker;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
+
+public class IndexToDictionaryFunction extends BasicFunction {
+
+	public final static FunctionSignature signature = new FunctionSignature(
+			new QName("spellcheck", SpellCheckModule.NAMESPACE_URI,
+					SpellCheckModule.PREFIX),
+			"A function to help evaluate a query term.", new SequenceType[] {
+					new FunctionParameterSequenceType("query", Type.STRING,
+							Cardinality.EXACTLY_ONE, "The query text"),
+					new FunctionParameterSequenceType("db", Type.STRING,
+							Cardinality.EXACTLY_ONE, "The query text"),
+					new FunctionParameterSequenceType("field", Type.STRING,
+							Cardinality.EXACTLY_ONE, "The query text") },
+			new FunctionReturnSequenceType(Type.STRING,
+					Cardinality.ZERO_OR_MORE, "the text to return"));
+
+	public IndexToDictionaryFunction(XQueryContext context) {
+		super(context, signature);
+	}
+
+	public Sequence eval(Sequence[] args, Sequence contextSequence)
+			throws XPathException {
+
+		if (args[0].isEmpty() || args[1].isEmpty() || args[2].isEmpty()) {
+			return Sequence.EMPTY_SEQUENCE;
+		}
+		String query = args[0].getStringValue();
+		String db = args[1].getStringValue();
+		String field = args[2].getStringValue();
+
+
+		ValueSequence result = new ValueSequence();
+		return result;
+	}
+}
