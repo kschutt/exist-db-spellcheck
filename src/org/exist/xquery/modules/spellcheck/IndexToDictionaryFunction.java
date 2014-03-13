@@ -3,6 +3,7 @@ package org.exist.xquery.modules.spellcheck;
 import java.io.File;
 import java.io.PrintWriter;
 
+import org.exist.dom.DocumentSet;
 import org.exist.dom.QName;
 import org.exist.indexing.lucene.LuceneIndexWorker;
 import org.exist.util.Occurrences;
@@ -31,13 +32,13 @@ public class IndexToDictionaryFunction extends BasicFunction {
 	private LuceneIndexWorker _indexWorker;
 
 	public final static FunctionSignature signature = new FunctionSignature(
-			new QName("spellcheck", SpellCheckModule.NAMESPACE_URI,
+			new QName("indextodictionary", SpellCheckModule.NAMESPACE_URI,
 					SpellCheckModule.PREFIX),
 			"A function to help evaluate a query term.", new SequenceType[] {
 					new FunctionParameterSequenceType("query", Type.STRING,
 							Cardinality.EXACTLY_ONE, "The query text"),
-					new FunctionParameterSequenceType("db", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The query text"),
+					new FunctionParameterSequenceType("db", Type.DOCUMENT,
+							Cardinality.ONE_OR_MORE, "The query text"),
 					new FunctionParameterSequenceType("field", Type.STRING,
 							Cardinality.EXACTLY_ONE, "The query text") },
 			new FunctionReturnSequenceType(Type.STRING,
@@ -45,7 +46,8 @@ public class IndexToDictionaryFunction extends BasicFunction {
 
 	public IndexToDictionaryFunction(XQueryContext context) {
 		super(context, signature);
-		_indexWorker = (LuceneIndexWorker)context.getBroker().getIndexController().getWorkerByIndexName("lucene-index");
+		_indexWorker = (LuceneIndexWorker) context.getBroker()
+				.getIndexController().getWorkerByIndexName("lucene-index");
 	}
 
 	public Sequence eval(Sequence[] args, Sequence contextSequence)
@@ -54,16 +56,27 @@ public class IndexToDictionaryFunction extends BasicFunction {
 		if (args[0].isEmpty() || args[1].isEmpty() || args[2].isEmpty()) {
 			return Sequence.EMPTY_SEQUENCE;
 		}
-		String query = args[0].getStringValue();
-		String db = args[1].getStringValue();
-		String field = args[2].getStringValue();
-		Occurrences[] items = _indexWorker.scanIndex(super.getContext(), documents, null, null);
-		PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
-		writer.close();
-
-
-
 		ValueSequence result = new ValueSequence();
+		try {
+			String query = args[0].getStringValue();
+			DocumentSet documents = (DocumentSet) args[1];
+			String field = args[2].getStringValue();
+			Occurrences[] items = _indexWorker.scanIndex(super.getContext(),
+					documents, null, null);
+			PrintWriter writer = new PrintWriter(
+					"/backup/dictionary2/dictionary.txt", "UTF-8");
+			for (int i = 0; i < items.length; i++) {
+				Occurrences occurrence = items[i];
+				writer.println(occurrence.getTerm());
+			}
+			writer.close();
+			result.add(new StringValue("Indexed this many items: " + items.length));
+
+		} catch (Exception e) {
+			result.add(new StringValue("There was an exception: "
+					+ e.getMessage()));
+
+		}
 		return result;
 	}
 }
