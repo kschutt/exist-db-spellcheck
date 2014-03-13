@@ -64,7 +64,7 @@ public class IndexToDictionaryFunction extends BasicFunction {
 			Occurrences[] items = _indexWorker.scanIndex(super.getContext(),
 					documents, null, null);
 			PrintWriter writer = new PrintWriter(
-					"/backup/dictionary2/dictionary.txt", "UTF-8");
+					"/backup/dictionary/dictionary.txt", "UTF-8");
 			for (int i = 0; i < items.length; i++) {
 				Occurrences occurrence = items[i];
 				writer.println(occurrence.getTerm());
