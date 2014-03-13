@@ -1,4 +1,4 @@
-package org.exist.xquery.modules.dcnmodules;
+package org.exist.xquery.modules.spellcheck;
 
 import java.io.File;
 
@@ -64,13 +64,13 @@ public class SpellCheckFunction extends BasicFunction {
 		ValueSequence result = new ValueSequence();
 		try {
 			Occurrences[] items = _indexWorker.scanIndex(super.getContext(), documents, null, null);
-			File dir = new File("/backup/dictionary3/");
+			File dir = new File("/backup/dictionary/");
 
 			Directory directory = FSDirectory.open(dir);
 
 			SpellChecker spellChecker = new SpellChecker(directory, new NGramDistance());
 			Dictionary dictioanry = new PlainTextDictionary(new File(
-					"/backup/dictionary3/dictionary.txt"));
+					"/backup/dictionary/dictionary.txt"));
 			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
 			spellChecker.indexDictionary(dictioanry,config,true);
 
