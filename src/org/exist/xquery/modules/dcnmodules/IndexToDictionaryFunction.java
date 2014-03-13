@@ -1,4 +1,4 @@
-package org.exist.xquery.modules.spellcheck;
+package org.exist.xquery.modules.dcnmodules;
 
 import java.io.File;
 

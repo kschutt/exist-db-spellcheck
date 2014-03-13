@@ -1,4 +1,4 @@
-package org.exist.xquery.modules.spellcheck;
+package org.exist.xquery.modules.dcnmodules;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +16,7 @@ public class SpellCheckModule extends AbstractInternalModule {
 
 	private final static FunctionDef[] functions = {
 			new FunctionDef(SpellCheckFunction.signature,
-					SpellCheckFunction.class),
-			new FunctionDef(IndexToDictionaryFunction.signature,
-					IndexToDictionaryFunction.class) };
+					SpellCheckFunction.class) };
 
 	public SpellCheckModule(Map<String, List<? extends Object>> parameters) {
 		super(functions, parameters);
