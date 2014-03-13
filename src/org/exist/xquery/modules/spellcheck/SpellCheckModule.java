@@ -15,8 +15,10 @@ public class SpellCheckModule extends AbstractInternalModule {
 	public final static String RELEASED_IN_VERSION = "eXist-2.1";
 
 	private final static FunctionDef[] functions = {
-			new FunctionDef(SpellCheckFunction.signature,
-					SpellCheckFunction.class) };
+		new FunctionDef(SpellCheckFunction.signature,
+				SpellCheckFunction.class),
+				new FunctionDef(IndexToDictionaryFunction.signature,
+						IndexToDictionaryFunction.class) };
 
 	public SpellCheckModule(Map<String, List<? extends Object>> parameters) {
 		super(functions, parameters);

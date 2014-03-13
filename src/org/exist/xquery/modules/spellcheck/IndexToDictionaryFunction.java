@@ -1,8 +1,11 @@
 package org.exist.xquery.modules.spellcheck;
 
 import java.io.File;
+import java.io.PrintWriter;
 
 import org.exist.dom.QName;
+import org.exist.indexing.lucene.LuceneIndexWorker;
+import org.exist.util.Occurrences;
 import org.exist.xquery.BasicFunction;
 import org.exist.xquery.Cardinality;
 import org.exist.xquery.FunctionSignature;
@@ -25,6 +28,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class IndexToDictionaryFunction extends BasicFunction {
+	private LuceneIndexWorker _indexWorker;
 
 	public final static FunctionSignature signature = new FunctionSignature(
 			new QName("spellcheck", SpellCheckModule.NAMESPACE_URI,
@@ -41,6 +45,7 @@ public class IndexToDictionaryFunction extends BasicFunction {
 
 	public IndexToDictionaryFunction(XQueryContext context) {
 		super(context, signature);
+		_indexWorker = (LuceneIndexWorker)context.getBroker().getIndexController().getWorkerByIndexName("lucene-index");
 	}
 
 	public Sequence eval(Sequence[] args, Sequence contextSequence)
@@ -52,6 +57,10 @@ public class IndexToDictionaryFunction extends BasicFunction {
 		String query = args[0].getStringValue();
 		String db = args[1].getStringValue();
 		String field = args[2].getStringValue();
+		Occurrences[] items = _indexWorker.scanIndex(super.getContext(), documents, null, null);
+		PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
+		writer.close();
+
 
 
 		ValueSequence result = new ValueSequence();

@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="src/lib/lucene-core-3.6.1.jar"/>
 	<classpathentry kind="lib" path="src/lib/lucene-spellchecker-3.6.1.jar"/>
 	<classpathentry kind="lib" path="src/lib/exist.jar"/>
+	<classpathentry kind="lib" path="src/lib/exist-index-lucene.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
