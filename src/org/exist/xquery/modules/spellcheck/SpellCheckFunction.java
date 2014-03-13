@@ -2,7 +2,10 @@ package org.exist.xquery.modules.spellcheck;
 
 import java.io.File;
 
+import org.exist.dom.DocumentSet;
 import org.exist.dom.QName;
+import org.exist.indexing.IndexWorker;
+import org.exist.util.Occurrences;
 import org.exist.xquery.BasicFunction;
 import org.exist.xquery.Cardinality;
 import org.exist.xquery.FunctionSignature;
@@ -21,6 +24,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.Dictionary;
 import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.spell.NGramDistance;
 import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.Directory;
@@ -29,15 +33,15 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
 public class SpellCheckFunction extends BasicFunction {
-
+	private IndexWorker _indexWorker;
 	public final static FunctionSignature signature = new FunctionSignature(
 			new QName("spellcheck", SpellCheckModule.NAMESPACE_URI,
 					SpellCheckModule.PREFIX),
 			"A function to help evaluate a query term.", new SequenceType[] {
 					new FunctionParameterSequenceType("query", Type.STRING,
 							Cardinality.EXACTLY_ONE, "The query text"),
-					new FunctionParameterSequenceType("db", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The db we want to index"),
+					new FunctionParameterSequenceType("db", Type.DOCUMENT,
+							Cardinality.ONE_OR_MORE, "The db we want to index"),
 					new FunctionParameterSequenceType("field", Type.STRING,
 							Cardinality.EXACTLY_ONE, "The field we want to build the dictionary from") },
 			new FunctionReturnSequenceType(Type.STRING,
@@ -45,27 +49,29 @@ public class SpellCheckFunction extends BasicFunction {
 
 	public SpellCheckFunction(XQueryContext context) {
 		super(context, signature);
+		_indexWorker = context.getBroker().getIndexController().getWorkerByIndexName("lucene-index");
 	}
 
 	public Sequence eval(Sequence[] args, Sequence contextSequence)
 			throws XPathException {
-
 		if (args[0].isEmpty() || args[1].isEmpty() || args[2].isEmpty()) {
 			return Sequence.EMPTY_SEQUENCE;
 		}
 		String query = args[0].getStringValue();
-		String db = args[1].getStringValue();
+		DocumentSet documents = (DocumentSet)args[1];
 		String field = args[2].getStringValue();
 
 		ValueSequence result = new ValueSequence();
 		try {
+			Occurrences[] items = _indexWorker.scanIndex(super.getContext(), documents, null, null);
 			File dir = new File("/backup/dictionary/");
 
 			Directory directory = FSDirectory.open(dir);
 
-			SpellChecker spellChecker = new SpellChecker(directory);
+			SpellChecker spellChecker = new SpellChecker(directory, new NGramDistance());
+			Dictionary dict = new LuceneDictionary(_indexWorker.)
 			Dictionary dictioanry = new PlainTextDictionary(new File(
-					"/backup/dictionary/fulldictionary00.txt"));
+					"/backup/dictionary/dictionary.txt"));
 			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
 			spellChecker.indexDictionary(dictioanry,config,true);
 
