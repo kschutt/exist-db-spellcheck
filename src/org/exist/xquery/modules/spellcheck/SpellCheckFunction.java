@@ -33,37 +33,27 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
 public class SpellCheckFunction extends BasicFunction {
-	private IndexWorker _indexWorker;
 	public final static FunctionSignature signature = new FunctionSignature(
 			new QName("spellcheck", SpellCheckModule.NAMESPACE_URI,
 					SpellCheckModule.PREFIX),
 			"A function to help evaluate a query term.", new SequenceType[] {
 					new FunctionParameterSequenceType("query", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The query text"),
-					new FunctionParameterSequenceType("db", Type.DOCUMENT,
-							Cardinality.ONE_OR_MORE, "The db we want to index"),
-					new FunctionParameterSequenceType("field", Type.STRING,
-							Cardinality.EXACTLY_ONE, "The field we want to build the dictionary from") },
+							Cardinality.EXACTLY_ONE, "The query text")},
 			new FunctionReturnSequenceType(Type.STRING,
 					Cardinality.ZERO_OR_MORE, "the text to return"));
 
 	public SpellCheckFunction(XQueryContext context) {
 		super(context, signature);
-		_indexWorker = context.getBroker().getIndexController().getWorkerByIndexName("lucene-index");
 	}
 
 	public Sequence eval(Sequence[] args, Sequence contextSequence)
 			throws XPathException {
-		if (args[0].isEmpty() || args[1].isEmpty() || args[2].isEmpty()) {
+		if (args[0].isEmpty()) {
 			return Sequence.EMPTY_SEQUENCE;
 		}
 		String query = args[0].getStringValue();
-		DocumentSet documents = (DocumentSet)args[1];
-		String field = args[2].getStringValue();
-
 		ValueSequence result = new ValueSequence();
 		try {
-			Occurrences[] items = _indexWorker.scanIndex(super.getContext(), documents, null, null);
 			File dir = new File("/backup/dictionary/");
 
 			Directory directory = FSDirectory.open(dir);
